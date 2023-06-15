@@ -1,15 +1,18 @@
-from fastapi import FastAPI
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException
+from pymongo import MongoClient
+from models import UserProfile
+
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
@@ -22,20 +25,62 @@ async def custom_swagger_ui_html():
     )
 
 
-@app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
-async def swagger_ui_redirect():
-    return get_swagger_ui_oauth2_redirect_html()
 
 
-@app.get("/redoc", include_in_schema=False)
-async def redoc_html():
-    return get_redoc_html(
-        openapi_url=app.openapi_url,
-        title=app.title + " - ReDoc",
-        redoc_js_url="/static/redoc.standalone.js",
-    )
+#-================================================================================
 
 
-@app.get("/users/{username}")
-async def read_user(username: str):
-    return {"message": f"Hello {username}"}
+# Connect to the MongoDB server
+client = MongoClient("mongodb://localhost:27017")
+db = client["your_database_name"]
+user_profile_collection = db["user_profiles"]
+
+app = FastAPI()
+
+@app.post("/api/profiles", status_code=201)
+def create_user_profile(user_profile: UserProfile):
+    # Check if the user ID already exists
+    if user_profile_collection.find_one({"userId": user_profile.userId}):
+        raise HTTPException(status_code=400, detail="User ID already exists")
+
+    # Insert the user profile into the collection
+    user_profile_dict = user_profile.dict()
+    user_profile_collection.insert_one(user_profile_dict)
+
+    return {"userId": user_profile.userId}
+
+@app.get("/api/profiles/{userId}")
+def get_user_profile(user_id: str):
+    user_profile = user_profile_collection.find_one({"userId": user_id})
+    if not user_profile:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user_profile
+
+@app.put("/api/profiles/{userId}")
+def update_user_profile(user_id: str, user_profile: UserProfile):
+    existing_profile = user_profile_collection.find_one({"userId": user_id})
+    if not existing_profile:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Update the fields in the existing profile
+    user_profile_dict = user_profile.dict()
+    user_profile_collection.update_one({"userId": user_id}, {"$set": user_profile_dict})
+
+    return user_profile
+
+@app.delete("/api/profiles/{userId}")
+def delete_user_profile(user_id: str):
+    result = user_profile_collection.delete_one({"userId": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"message": "User profile deleted"}
+
+@app.delete("/api/profiles/{userId}/profile-picture", status_code=204)
+def delete_profile_picture(user_id: str):
+    result = user_profile_collection.update_one({"userId": user_id}, {"$unset": {"profilePictureUrl": ""}})
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"message": "Profile picture deleted"}
