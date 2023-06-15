@@ -44,10 +44,31 @@ topics = [
     "user-profile-accessed",
     "user-profile-updated",
     "user-profile-deleted",
-    "all-user-profiles-accessed"
+    "all-user-profiles-accessed",
+    "module_created",
+    "module_retrieved",
+    "module_updated",
+    "module_deleted"
 ]
 
+from confluent_kafka.admin import AdminClient, NewTopic
+kafka_bootstrap_servers = "localhost:9092"
+
+admin_client = AdminClient({"bootstrap.servers": kafka_bootstrap_servers})
+
+def create_topic_if_not_exist(topic_name):
+    # Check if the topic already exists
+    topic_metadata = admin_client.list_topics(timeout=5)
+    if topic_name not in topic_metadata.topics:
+        # Topic doesn't exist, create it
+        new_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1)
+        admin_client.create_topics([new_topic])
+
 # Create and start a thread for each listener
+
+for topic in topics:
+    create_topic_if_not_exist(topic)
+
 threads = []
 for topic in topics:
     thread = threading.Thread(target=kafka_listener, args=(topic,))

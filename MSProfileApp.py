@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException
 from pymongo import MongoClient
-from models import UserProfile
+from userProfileModel import UserProfile
 
 
 app = FastAPI(docs_url=None, redoc_url=None)
