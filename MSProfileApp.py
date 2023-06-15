@@ -31,11 +31,10 @@ async def custom_swagger_ui_html():
 
 
 # Connect to the MongoDB server
-client = MongoClient("mongodb://localhost:27017")
-db = client["your_database_name"]
+client = MongoClient("mongodb://root:example@localhost:27017/")
+db = client["userProfileDB"]
 user_profile_collection = db["user_profiles"]
 
-app = FastAPI()
 
 @app.post("/api/profiles", status_code=201)
 def create_user_profile(user_profile: UserProfile):
@@ -54,6 +53,9 @@ def get_user_profile(user_id: str):
     user_profile = user_profile_collection.find_one({"userId": user_id})
     if not user_profile:
         raise HTTPException(status_code=404, detail="User not found")
+
+    # Convert ObjectId to string representation
+    user_profile["_id"] = str(user_profile["_id"])
 
     return user_profile
 
@@ -84,3 +86,14 @@ def delete_profile_picture(user_id: str):
         raise HTTPException(status_code=404, detail="User not found")
 
     return {"message": "Profile picture deleted"}
+
+
+from bson import ObjectId
+
+@app.get("/api/profiles")
+def get_all_user_profiles():
+    user_profiles = list(user_profile_collection.find())
+    # Convert ObjectId to string representation
+    for profile in user_profiles:
+        profile["_id"] = str(profile["_id"])
+    return user_profiles
