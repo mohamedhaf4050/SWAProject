@@ -11,3 +11,4 @@ psycopg2-binary==2.9.5
 uvicorn==0.20.0
 pymongo
 confluent_kafka
+pytest
