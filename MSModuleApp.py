@@ -32,6 +32,11 @@ async def custom_swagger_ui_html():
 
 from confluent_kafka import Producer
 import json
+from confluent_kafka.admin import AdminClient, NewTopic
+from confluent_kafka import KafkaException
+import json
+from confluent_kafka import Producer
+
 
 # Connect to MongoDB
 client = MongoClient("mongodb://root:example@localhost:27017/")
@@ -41,7 +46,35 @@ collection = db["modules"]
 # Kafka configuration
 kafka_bootstrap_servers = "localhost:9092"
 kafka_topic = "elearning_topic"
-kafka_producer = Producer({"bootstrap.servers": kafka_bootstrap_servers})
+
+# Kafka producer configuration
+kafka_conf = {
+    "bootstrap.servers": "localhost:9092",  # Kafka broker address
+    "client.id": "user-profile-producer",  # Unique ID for the Kafka producer
+}
+kafka_producer = Producer(kafka_conf)
+
+def publish_to_kafka(topic: str, message: dict):
+    try:
+        value = json.dumps(message).encode("utf-8")
+        kafka_producer.produce(topic, value=value)
+        kafka_producer.flush()
+    except KafkaException as e:
+        if e.args[0].code() == KafkaException.UNKNOWN_TOPIC_OR_PART:
+            create_topic(topic)
+            kafka_producer.produce(topic, value=value)
+            kafka_producer.flush()
+        else:
+            raise e
+
+
+def create_topic(topic: str):
+    admin_client = AdminClient({"bootstrap.servers": kafka_bootstrap_servers})
+    topic_metadata = admin_client.list_topics(timeout=5)
+    if topic not in topic_metadata.topics:
+        new_topic = NewTopic(topic, num_partitions=1, replication_factor=1)
+        admin_client.create_topics([new_topic], request_timeout=15)
+        admin_client.close()
 
 
 class Module(BaseModel):
@@ -53,23 +86,13 @@ class Module(BaseModel):
     sub_modules: List[str] = []
 
 
-
-
-def publish_to_kafka(event: str, module_id: str):
-    kafka_message = {"event": event, "module_id": module_id}
-    kafka_producer.produce(kafka_topic, value=json.dumps(kafka_message).encode("utf-8"))
-    kafka_producer.flush()
-
-
 @app.post("/module/")
 def create_module(module: Module):
     module_dict = module.dict()
 
-    
-    if not module.parent_module_id: 
+    if not module.parent_module_id:
         result = collection.insert_one(module_dict)
         module.module_id = str(result.inserted_id)
-
     else:
         parent_module = collection.find_one({"module_id": module.parent_module_id})
         if parent_module:
@@ -80,12 +103,11 @@ def create_module(module: Module):
         else:
             raise HTTPException(status_code=404, detail="Parent module not found")
 
-        
-
     # Publish message to Kafka topic
     publish_to_kafka("module_created", module.module_id)
 
     return module
+
 
 @app.get("/module/{module_id}")
 def get_module(module_id: str):
@@ -98,6 +120,7 @@ def get_module(module_id: str):
 
     raise HTTPException(status_code=404, detail="Module not found")
 
+
 @app.get("/module")
 def get_all_modules():
     modules = collection.find()
@@ -108,6 +131,7 @@ def get_all_modules():
         publish_to_kafka("module_retrieved", module.module_id)
 
     return module_list
+
 
 @app.put("/module/{module_id}")
 def update_module(module_id: str, module: Module):
@@ -120,6 +144,7 @@ def update_module(module_id: str, module: Module):
         return module
 
     raise HTTPException(status_code=404, detail="Module not found")
+
 
 @app.delete("/module/{module_id}")
 def delete_module(module_id: str):
