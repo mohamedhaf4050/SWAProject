@@ -2,8 +2,8 @@ import uvicorn
 import os
 import subprocess
 
-
-from Apps.MSModule.MSModuleApp import app 
+from Apps.MSProfile.MSProfileApp import app 
+# from Apps.MSModule.MSModuleApp import app 
 
 
 if __name__ == '__main__':
