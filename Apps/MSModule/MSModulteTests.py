@@ -16,29 +16,29 @@ def test_client():
     return TestClient(app)
 
 
-@pytest.fixture(autouse=True)
-def setup_teardown():
-    # Clear the collection before each test
-    collection.delete_many({})
+# @pytest.fixture(autouse=True)
+# def setup_teardown():
+#     # Clear the collection before each test
+#     collection.delete_many({})
 
-# def test_create_module_with_id_99(client):
-#     response = client.post(
-#         "/module/",
-#         json={
-#             "module_id": "99",
-#             "title": "Module 99",
-#             "description": "Module 99 description",
-#             "content": {},
-#             "parent_module_id": None,
-#             "sub_modules": []
-#         }
-#     )
-#     assert response.status_code == 200
-#     assert response.status_code == 200
-#     assert response.json()["title"] == "Module 99"
-#     assert response.json()["description"] == "Module 99 description"
-#     assert response.json()["content"] == {}
-#     assert response.json()["module_id"] == "99"
+def test_create_module_with_id_99(client):
+    response = client.post(
+        "/module/",
+        json={
+            "module_id": "99",
+            "title": "Module 99",
+            "description": "Module 99 description",
+            "content": {},
+            "parent_module_id": None,
+            "sub_modules": []
+        }
+    )
+    assert response.status_code == 200
+    assert response.status_code == 200
+    assert response.json()["title"] == "Module 99"
+    assert response.json()["description"] == "Module 99 description"
+    assert response.json()["content"] == {}
+    assert response.json()["module_id"] == "99"
 
 
 # def test_update_module_99(client):
@@ -77,7 +77,7 @@ def setup_teardown():
 #     }
 
 def test_delete_module_with_id_99(client):
-    response = client.delete("/module/64a0180f62284bd6426b5d9b")
+    response = client.delete("/module/99")
     
     assert response.status_code == 200
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
-from typing import List, Dict
+from .cirriclumModel import Module
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
@@ -88,27 +88,22 @@ def create_topic(topic: str):
         admin_client.close()
 
 
-class Module(BaseModel):
-    module_id: str
-    title: str
-    description: str
-    content: Dict = None
-    parent_module_id: str = None
-    sub_modules: List[str] = []
-
 
 @app.post("/module/")
 def create_module(module: Module):
     module_dict = module.dict()
 
+    def create():
+            result = collection.insert_one(module_dict)
+            # module.db_id = str(result.inserted_id)
+            module.module_id = module.module_id  
+
     if not module.parent_module_id:
-        result = collection.insert_one(module_dict)
-        module.module_id = str(result.inserted_id)
+        create()
     else:
         parent_module = collection.find_one({"module_id": module.parent_module_id})
         if parent_module:
-            result = collection.insert_one(module_dict)
-            module.module_id = str(result.inserted_id)
+            create()
             parent_module["sub_modules"].append(module.module_id)
             collection.update_one({"module_id": module.parent_module_id}, {"$set": parent_module})
         else:
