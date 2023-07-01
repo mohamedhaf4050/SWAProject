@@ -24,8 +24,8 @@ async def custom_swagger_ui_html():
         openapi_url=app.openapi_url,
         title=app.title + " - Swagger UI",
         oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
-        swagger_js_url="Apps/Util/static/swagger-ui-bundle.js",
-        swagger_css_url="Apps/Util/static/swagger-ui.css",
+        swagger_js_url="/static/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger-ui.css",
     )
     # Custom exception handler for 400 Bad Request
 @app.exception_handler(HTTPException)
@@ -75,6 +75,8 @@ def publish_to_kafka(topic: str, message: dict):
             kafka_producer.flush()
         else:
             raise e
+
+#hello
 
 
 def create_topic(topic: str):

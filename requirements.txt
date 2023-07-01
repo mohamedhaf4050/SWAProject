@@ -1,6 +1,5 @@
 kafka-python
 uvicorn
-googletrans==3.1.0a0
 nltk
 ormar
 sqlalchemy
@@ -12,3 +11,5 @@ uvicorn==0.20.0
 pymongo
 confluent_kafka
 pytest
+requests
+httpx 
