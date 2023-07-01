@@ -1,4 +1,4 @@
-uvicorn MSModuleApp.py:app --reload
+uvicorn MSModuleApp:app --reload
 
 http://127.0.0.1:8000/docs
 
@@ -11,3 +11,5 @@ hosamksbaa@mail.com
 Co-authored-by: Hosam K <HosamKsbaa@users.noreply.github.com>
 
 
+todo 
+لو في بيرنت تمسح نمسح الشايلد 

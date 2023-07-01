@@ -25,7 +25,13 @@ async def custom_swagger_ui_html():
     )
 
 
-
+@app.exception_handler(HTTPException)
+async def handle_bad_request(request, exc):
+    print(exc.detail)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
 
 #-================================================================================
 

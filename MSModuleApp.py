@@ -28,6 +28,16 @@ async def custom_swagger_ui_html():
         swagger_js_url="/static/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui.css",
     )
+    # Custom exception handler for 400 Bad Request
+@app.exception_handler(HTTPException)
+async def handle_bad_request(request, exc):
+    print(exc.detail)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
+
+
 #-================================================================================
 
 from confluent_kafka import Producer
