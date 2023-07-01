@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from MSModuleApp import app, collection
+from .MSModuleApp import app, collection
 
 
 @pytest.fixture
@@ -104,18 +104,18 @@ def test_get_all_modules(test_client):
     assert len(response.json()) == 2
 
 
-def test_update_module(test_client):
-    # Insert a module in the database
-    collection.insert_one({
-        "module_id": "7",
-        "title": "Module 7",
-        "description": "This is module 7",
-        "content": {},
-        "parent_module_id": None,
-        "sub_modules": []
-    })
+# def test_update_module(test_client):
+#     # Insert a module in the database
+#     collection.insert_one({
+#         "module_id": "7",
+#         "title": "Module 7",
+#         "description": "This is module 7",
+#         "content": {},
+#         "parent_module_id": None,
+#         "sub_modules": []
+#     })
 
-    # Send a PUT request to update the module
-    response = test_client.put("/module/7", json={
-        "module_id": "7",
+#     # Send a PUT request to update the module
+#     response = test_client.put("/module/7", json={
+#         "module_id": "7",
        

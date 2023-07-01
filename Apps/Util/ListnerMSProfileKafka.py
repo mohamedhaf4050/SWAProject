@@ -1,7 +1,7 @@
 from confluent_kafka import Consumer, KafkaError
 import threading
 
-
+topics =["", "", "", "", "", "", "", "","", "", "", "", "", ""]
 def kafka_listener(topic):
     # Kafka consumer configuration
     kafka_conf = {
@@ -9,6 +9,12 @@ def kafka_listener(topic):
         "group.id": f"{topic}-consumer",  # Consumer group ID
         "auto.offset.reset": "earliest",  # Start consuming from the beginning of the topic
     }
+
+    
+    # for topic in   topics:
+    #     create_topic(topic)
+
+
 
     # Create the Kafka consumer
     kafka_consumer = Consumer(kafka_conf)

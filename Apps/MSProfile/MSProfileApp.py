@@ -7,12 +7,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException
 from pymongo import MongoClient
-from userProfileModel import UserProfile
+from .userProfileModel import UserProfile
 
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="Apps/Util/static"), name="static")
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
@@ -20,8 +20,8 @@ async def custom_swagger_ui_html():
         openapi_url=app.openapi_url,
         title=app.title + " - Swagger UI",
         oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
-        swagger_js_url="/static/swagger-ui-bundle.js",
-        swagger_css_url="/static/swagger-ui.css",
+        swagger_js_url="Apps/Util/static/swagger-ui-bundle.js",
+        swagger_css_url="Apps/Util/static/swagger-ui.css",
     )
 
 
