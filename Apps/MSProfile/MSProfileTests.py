@@ -60,5 +60,40 @@ def test_create_user_profile_invalid_data():
     assert response.status_code == 400
 
 
-# Add more test cases as needed
+# def test_delete_user_profile_success():
+#     # Create a user profile for deletion
+#     profile = {
+#         "userId": "789",
+#         "username": "john_doe",
+#         "email": "john.doe@example.com",
+#         "profilePictureUrl": "https://example.com/profile.jpg"
+#     }
+
+#     # Insert the profile into the database
+#     response = client.post("/api/profiles", json=profile)
+
+#     # Send a request to delete the user profile
+#     response = client.delete("/api/profiles/789")
+
+#     # Assert the response status code is 200 (OK)
+#     assert response.status_code == 200
+
+#     # Assert the response body contains the correct message
+#     assert response.json() == {"message": "User profile deleted"}
+
+
+
+# def test_delete_user_profile_not_found():
+#     # Send a request to delete a user profile that doesn't exist
+#     response = client.delete("/api/profiles/99999")
+
+#     # Assert the response status code is 422
+#     assert response.status_code == 422
+
+#     # Assert the response body contains the correct error message
+#     assert response.json() == {"detail": "User not found"}
+
+
+
+
 
