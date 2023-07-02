@@ -54,6 +54,8 @@ def test_create_user_profile_existing_id():
 
     
 
+    
+
 def test_create_user_profile_invalid_data():
     # Send a request to create a user profile with invalid data
     payload = {
@@ -100,8 +102,3 @@ def test_delete_user_profile_not_found():
 
     # Assert the response body contains the correct error message
     assert response.json() == {"detail": "User not found"}
-
-
-
-
-

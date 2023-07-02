@@ -54,7 +54,8 @@ topics = [
     "module_created",
     "module_retrieved",
     "module_updated",
-    "module_deleted"
+    "module_deleted",
+    "profile_picture"
 ]
 
 from confluent_kafka.admin import AdminClient, NewTopic
