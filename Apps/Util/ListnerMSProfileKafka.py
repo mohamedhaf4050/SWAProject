@@ -1,3 +1,4 @@
+import os
 from confluent_kafka import Consumer, KafkaError
 import threading
 
@@ -5,17 +6,13 @@ topics =["", "", "", "", "", "", "", "","", "", "", "", "", ""]
 def kafka_listener(topic):
     # Kafka consumer configuration
     kafka_conf = {
-        "bootstrap.servers": "localhost:9092",  # Kafka broker address
+        "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
         "group.id": f"{topic}-consumer",  # Consumer group ID
         "auto.offset.reset": "earliest",  # Start consuming from the beginning of the topic
     }
-
     
     # for topic in   topics:
-    #     create_topic(topic)
-
-
-
+    #     create_topic(topic
     # Create the Kafka consumer
     kafka_consumer = Consumer(kafka_conf)
     kafka_consumer.subscribe([topic])
@@ -59,7 +56,7 @@ topics = [
 ]
 
 from confluent_kafka.admin import AdminClient, NewTopic
-kafka_bootstrap_servers = "localhost:9092"
+kafka_bootstrap_servers =  os.getenv('KAFKA_BOOTSTRAP_SERVERS')
 
 admin_client = AdminClient({"bootstrap.servers": kafka_bootstrap_servers})
 

@@ -1,17 +1,19 @@
+from more_itertools import consume
 from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import KafkaException
 
-def init():
 
-    # Kafka producer configuration
-    kafka_conf = {
-        "bootstrap.servers": "localhost:9092",  # Kafka broker address
-        "client.id": "user-profile-producer",  # Unique ID for the Kafka producer
-    }
+# def init():
 
-    # Create the Kafka producer
-    kafka_producer = Producer(kafka_conf)
+#     # Kafka producer configuration
+#     kafka_conf = {
+#         "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
+#         "client.id": "user-profile-producer",  # Unique ID for the Kafka producer
+#     }
+
+#     # Create the Kafka producer
+#     return = Producer(kafka_conf)
 
 
 

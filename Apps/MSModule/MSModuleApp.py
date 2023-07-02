@@ -45,6 +45,7 @@ from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import KafkaException
 import json
 from confluent_kafka import Producer
+import os
 
 
 # Connect to MongoDB
@@ -53,12 +54,12 @@ db = client["elearningDB"]
 collection = db["modules"]
 
 # Kafka configuration
-kafka_bootstrap_servers = "localhost:9092"
+kafka_bootstrap_servers =  os.getenv('KAFKA_BOOTSTRAP_SERVERS')
 kafka_topic = "elearning_topic"
 
 # Kafka producer configuration
 kafka_conf = {
-    "bootstrap.servers": "localhost:9092",  # Kafka broker address
+    "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
     "client.id": "user-profile-producer",  # Unique ID for the Kafka producer
 }
 kafka_producer = Producer(kafka_conf)

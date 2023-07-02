@@ -1,3 +1,4 @@
+import os
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
@@ -46,7 +47,7 @@ from confluent_kafka import KafkaException
 
 # Kafka producer configuration
 kafka_conf = {
-    "bootstrap.servers": "localhost:9092",  # Kafka broker address
+    "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
     "client.id": "user-profile-producer",  # Unique ID for the Kafka producer
 }
 

@@ -1,10 +1,11 @@
+import os
 from confluent_kafka import Consumer
 import json 
 from pymongo import MongoClient, UpdateOne
 
 # Kafka consumer configuration
 kafka_conf = {
-    "bootstrap.servers": "localhost:9092",  # Kafka broker address
+    "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
     "group.id": "user-profile-consumer",  # Unique ID for the Kafka consumer group
     "auto.offset.reset": "earliest",  # Start consuming from the beginning of the topic
 }
