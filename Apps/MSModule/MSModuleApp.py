@@ -154,11 +154,27 @@ def update_module(module_id: str, module: Module):
 
 @app.delete("/module/{module_id}")
 def delete_module(module_id: str):
-    result = collection.delete_one({"module_id": module_id})
-    if result.deleted_count > 0:
-        # Publish message to Kafka topic
-        publish_to_kafka("module_deleted", module_id)
+    module = collection.find_one({"module_id": module_id})
+    if module:
+        # Recursively delete child modules
+        delete_child_modules(module_id)
+        
+        # Delete the parent module
+        result = collection.delete_one({"module_id": module_id})
+        if result.deleted_count > 0:
+            # Publish message to Kafka topic
+            publish_to_kafka("module_deleted", module_id)
 
-        return {"message": "Module deleted"}
+            return {"message": "Module deleted"}
 
     raise HTTPException(status_code=404, detail="Module not found")
+
+
+def delete_child_modules(module_id: str):
+    # Find and delete child modules recursively
+    child_modules = collection.find({"parent_module_id": module_id})
+    for child_module in child_modules:
+        delete_child_modules(child_module["module_id"])
+        collection.delete_one({"module_id": child_module["module_id"]})
+
+        
