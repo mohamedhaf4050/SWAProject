@@ -1,18 +1,24 @@
 import os
 from confluent_kafka import Consumer, KafkaError
 import threading
+from dotenv import load_dotenv
 
-topics =["", "", "", "", "", "", "", "","", "", "", "", "", ""]
+load_dotenv()
+
+
+print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
+print(os.getenv('MONGO_HOST'))
+
+from confluent_kafka.admin import AdminClient, NewTopic
+
 def kafka_listener(topic):
     # Kafka consumer configuration
     kafka_conf = {
-        "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
+        "bootstrap.servers": os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
         "group.id": f"{topic}-consumer",  # Consumer group ID
         "auto.offset.reset": "earliest",  # Start consuming from the beginning of the topic
     }
-    
-    # for topic in   topics:
-    #     create_topic(topic
+
     # Create the Kafka consumer
     kafka_consumer = Consumer(kafka_conf)
     kafka_consumer.subscribe([topic])
@@ -55,24 +61,22 @@ topics = [
     "profile_picture"
 ]
 
-from confluent_kafka.admin import AdminClient, NewTopic
-kafka_bootstrap_servers =  os.getenv('KAFKA_BOOTSTRAP_SERVERS')
-
+kafka_bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
 admin_client = AdminClient({"bootstrap.servers": kafka_bootstrap_servers})
 
-# def create_topic_if_not_exist(topic_name):
-#     # Check if the topic already exists
-#     topic_metadata = admin_client.list_topics(timeout=5)
-#     if topic_name not in topic_metadata.topics:
-#         # Topic doesn't exist, create it
-#         new_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1)
-#         admin_client.create_topics([new_topic])
+def create_topic_if_not_exist(topic_name):
+    # Check if the topic already exists
+    topic_metadata = admin_client.list_topics(timeout=5).topics
+    if topic_name not in topic_metadata:
+        # Topic doesn't exist, create it
+        new_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1)
+        admin_client.create_topics([new_topic])
+
+# Create topics if they don't exist
+for topic in topics:
+    create_topic_if_not_exist(topic)
 
 # Create and start a thread for each listener
-
-# for topic in topics:
-#     create_topic_if_not_exist(topic)
-
 threads = []
 for topic in topics:
     thread = threading.Thread(target=kafka_listener, args=(topic,))
