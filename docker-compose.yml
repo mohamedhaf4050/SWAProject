@@ -84,12 +84,12 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
-  msprofileapp:
+  ms_profile_app:
       build:
         context: .
-        dockerfile: DockerFile
+        dockerfile: DockerFile_appProfile
       ports:
-        - "8000:8000"
+        - "8002:8000"
       environment:
         - KAFKA_BOOTSTRAP_SERVERS=swaproject-kafka-1:9092
         - DB_VERSION=3.8
@@ -98,7 +98,20 @@ services:
       depends_on:
         - kafka
         - mongo
-
+  ms_module_app:
+      build:
+        context: .
+        dockerfile: DockerFile_appModule
+      ports:
+        - "8001:8000"
+      environment:
+        - KAFKA_BOOTSTRAP_SERVERS=swaproject-kafka-1:9092
+        - DB_VERSION=3.8
+        - MONGO_HOST=mongo:27017
+      
+      depends_on:
+        - kafka
+        - mongo
 volumes:
   mongodb_data:
 
