@@ -12,7 +12,8 @@ from .userProfileModel import UserProfile
 
 
 app = FastAPI(docs_url=None, redoc_url=None)
-
+print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
+print(os.getenv('MONGO_HOST'))
 app.mount("/static", StaticFiles(directory="Apps/Util/static"), name="static")
 
 @app.get("/docs", include_in_schema=False)
@@ -37,7 +38,7 @@ async def handle_bad_request(request, exc):
 
 
 # Connect to the MongoDB server
-client = MongoClient("mongodb://root:example@localhost:27017/")
+client = MongoClient(f"mongodb://root:example@{os.getenv('MONGO_HOST')}/")
 db = client["userProfileDB"]
 user_profile_collection = db["user_profiles"]
 
@@ -50,7 +51,7 @@ kafka_conf = {
     "bootstrap.servers":  os.getenv('KAFKA_BOOTSTRAP_SERVERS'),  # Kafka broker address
     "client.id": "user-profile-producer",  # Unique ID for the Kafka producer
 }
-
+print(kafka_conf)
 # Create the Kafka producer
 kafka_producer = Producer(kafka_conf)
 

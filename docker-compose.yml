@@ -18,7 +18,7 @@ services:
       - "9092:9092"
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      # - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
 
 
 
@@ -85,15 +85,19 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
   msprofileapp:
-    build:
-      context: .
-      dockerfile: DockerFile  
-    ports:
-      - "8000:8000"
-    environment:
-      - KAFKA_HOST=kafka:9092
-    depends_on:
-      - kafka
+      build:
+        context: .
+        dockerfile: DockerFile
+      ports:
+        - "8000:8000"
+      environment:
+        - KAFKA_BOOTSTRAP_SERVERS=swaproject-kafka-1:9092
+        - DB_VERSION=3.8
+        - MONGO_HOST=mongo:27017
+      
+      depends_on:
+        - kafka
+        - mongo
 
 volumes:
   mongodb_data:

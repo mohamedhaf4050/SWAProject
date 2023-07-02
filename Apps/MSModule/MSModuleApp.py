@@ -12,10 +12,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException
 from pymongo import MongoClient
+import os 
 
 
 app = FastAPI(docs_url=None, redoc_url=None)
-
+print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
+print(os.getenv('MONGO_HOST'))
 app.mount("/static", StaticFiles(directory="Apps/Util/static"), name="static")
 
 @app.get("/docs", include_in_schema=False)
@@ -49,7 +51,7 @@ import os
 
 
 # Connect to MongoDB
-client = MongoClient("mongodb://root:example@localhost:27017/")
+client = MongoClient(f"mongodb://root:example@{os.getenv('MONGO_HOST')}/")
 db = client["elearningDB"]
 collection = db["modules"]
 

@@ -10,7 +10,7 @@ kafka_conf = {
     "auto.offset.reset": "earliest",  # Start consuming from the beginning of the topic
 }
 
-client = MongoClient("mongodb://root:example@localhost:27017/")
+client = MongoClient(f"mongodb://root:example@{os.getenv('MONGO_HOST')}/")
 db = client["userProfileDB"]
 user_profile_collection = db["user_profiles"]
 

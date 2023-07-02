@@ -32,7 +32,7 @@ async def custom_swagger_ui_html():
 
 
 # Connect to the MongoDB server
-client = MongoClient("mongodb://root:example@localhost:27017/")
+client = MongoClient(f"mongodb://root:example@{os.getenv('MONGO_HOST')}/")
 db = client["userProfileDB"]
 user_profile_collection = db["user_profiles"]
 

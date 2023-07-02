@@ -17,5 +17,5 @@ COPY . .
 EXPOSE 8000
 
 # Start the FastAPI server
-CMD [ "python", "appModule.py" ]
+CMD [ "python","-u", "appModule.py" ]
 
