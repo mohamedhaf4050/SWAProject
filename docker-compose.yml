@@ -84,5 +84,19 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
+  msprofileapp:
+    build:
+      context: .
+      dockerfile: DockerFile  
+    ports:
+      - "8000:8000"
+    environment:
+      - KAFKA_HOST=kafka:9092
+    depends_on:
+      - kafka
+
 volumes:
   mongodb_data:
+
+
+

@@ -2,9 +2,7 @@ import uvicorn
 import os
 import subprocess
 
-# from Apps.MSProfile.MSProfileApp import app 
-from Apps.MSModule.MSModuleApp import app 
-
+from Apps.MSProfile.MSProfileApp import app
 
 if __name__ == '__main__':
     
@@ -12,7 +10,7 @@ if __name__ == '__main__':
 
     # os.system(f"python Apps/Util/ListnerMSProfileKafka.py")
 
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
     
     
     # uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
