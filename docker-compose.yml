@@ -19,9 +19,11 @@ services:
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       # - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-
-
-
+    healthcheck:
+          test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+          interval: 10s
+          timeout: 10s
+          retries: 5
 
   # routerapp:
   #   container_name: routerApp
@@ -91,10 +93,9 @@ services:
         - KAFKA_BOOTSTRAP_SERVERS=swaproject-kafka-1:9092
         - DB_VERSION=3.8
         - MONGO_HOST=mongo:27017
-      
       depends_on:
-        - kafka
-        - mongo
+            kafka:
+              condition: service_healthy
   ms_profile_app:
       build:
         context: .
@@ -107,8 +108,7 @@ services:
         - MONGO_HOST=mongo:27017
       
       depends_on:
-        - kafka
-        - mongo
+
         - ms_lis
   ms_module_app:
       build:
@@ -122,8 +122,7 @@ services:
         - MONGO_HOST=mongo:27017
       
       depends_on:
-        - kafka
-        - mongo
+
         - ms_lis
 volumes:
   mongodb_data:
