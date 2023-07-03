@@ -31,9 +31,9 @@ services:
       - "9093:9092"
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093
     healthcheck:
-          test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+          test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9093", "--list"]
           interval: 10s
           timeout: 10s
           retries: 5

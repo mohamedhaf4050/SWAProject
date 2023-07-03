@@ -1,9 +1,10 @@
+import os
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 import json
 
 # Kafka configuration
-bootstrap_servers = 'localhost:9092'
+bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
 topic = 'profile_picture'
 num_partitions = 1
 replication_factor = 1
