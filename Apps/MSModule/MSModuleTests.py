@@ -1,11 +1,14 @@
+import os
 import pytest
 from fastapi.testclient import TestClient
 
 from .MSModuleApp import app, collection
 
-
+from dotenv import load_dotenv
+load_dotenv()
 # client = TestClient(app)
-
+print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
+print(os.getenv('MONGO_HOST'))
 @pytest.fixture
 def client():
     with TestClient(app) as client:

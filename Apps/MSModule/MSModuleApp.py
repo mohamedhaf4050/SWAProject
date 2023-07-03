@@ -96,6 +96,11 @@ def create_topic(topic: str):
 def create_module(module: Module):
     module_dict = module.dict()
 
+  # Check if module ID already exists
+    existing_module = collection.find_one({"module_id": module.module_id})
+    if existing_module:
+        raise HTTPException(status_code=409, detail="Module ID already exists")
+
     def create():
             result = collection.insert_one(module_dict)
             # module.db_id = str(result.inserted_id)
@@ -144,6 +149,11 @@ def get_all_modules():
 
 @app.put("/module/{module_id}")
 def update_module(module_id: str, module: Module):
+      # Check if module ID already exists
+    existing_module = collection.find_one({"module_id": module.module_id})
+    if existing_module:
+        raise HTTPException(status_code=409, detail="Module ID already exists")
+
     module_dict = module.dict()
     result = collection.update_one({"module_id": module_id}, {"$set": module_dict})
     if result.modified_count > 0:

@@ -1,9 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
 from .MSProfileApp import app
+from dotenv import load_dotenv
 
+import os
+
+load_dotenv()
 client = TestClient(app)
-
+print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
+print(os.getenv('MONGO_HOST'))
 
 def test_create_user_profile_success():
     # Send a request to create a new user profile
