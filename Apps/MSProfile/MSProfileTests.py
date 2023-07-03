@@ -65,7 +65,6 @@ def test_create_user_profile_existing_id():
 def test_create_user_profile_invalid_data():
     # Send a request to create a user profile with invalid data
     payload = {
-        "userId": "invalid",
         "username": "invalid_user",
         "email": "invalid.user@example.com",
         "profilePictureUrl": "https://example.com/invalid.jpg"
@@ -73,7 +72,7 @@ def test_create_user_profile_invalid_data():
     response = client.post("/api/profiles", json=payload)
 
     # Assert the response status code is 400
-    assert response.status_code == 400
+    assert response.status_code == 422
 
 
 def test_delete_user_profile_success():

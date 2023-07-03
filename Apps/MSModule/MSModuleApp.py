@@ -78,7 +78,7 @@ def publish_to_kafka(topic: str, message: dict):
             kafka_producer.flush()
         else:
             raise e
-
+#aaa
 #hello
 
 

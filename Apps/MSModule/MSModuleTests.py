@@ -19,10 +19,7 @@ def test_client():
     return TestClient(app)
 
 
-# @pytest.fixture(autouse=True)
-# def setup_teardown():
-#     # Clear the collection before each test
-#     collection.delete_many({})
+
 
 def test_create_module_with_id_99(client):
     response = client.post(
