@@ -13,6 +13,16 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException
 from pymongo import MongoClient
 import os 
+from ..Util.database import collection
+from confluent_kafka import Producer
+import json
+from confluent_kafka.admin import AdminClient, NewTopic
+from confluent_kafka import KafkaException
+import json
+from confluent_kafka import Producer
+import os
+from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_producer
+
 
 
 app = FastAPI(docs_url=None, redoc_url=None)
@@ -40,15 +50,6 @@ async def handle_bad_request(request, exc):
 
 
 #-================================================================================
-
-from confluent_kafka import Producer
-import json
-from confluent_kafka.admin import AdminClient, NewTopic
-from confluent_kafka import KafkaException
-import json
-from confluent_kafka import Producer
-import os
-from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_producer
 
 
 
