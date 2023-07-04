@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
+
+from Apps.Util.fastap import init_app
 from .cirriclumModel import Module
 from fastapi.openapi.docs import (
     get_redoc_html,
@@ -25,29 +27,7 @@ from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_produ
 
 
 
-app = FastAPI(docs_url=None, redoc_url=None)
-print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
-print(os.getenv('MONGO_HOST'))
-app.mount("/static", StaticFiles(directory="Apps/Util/static"), name="static")
-
-@app.get("/docs", include_in_schema=False)
-async def custom_swagger_ui_html():
-    return get_swagger_ui_html(
-        openapi_url=app.openapi_url,
-        title=app.title + " - Swagger UI",
-        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
-        swagger_js_url="/static/swagger-ui-bundle.js",
-        swagger_css_url="/static/swagger-ui.css",
-    )
-    # Custom exception handler for 400 Bad Request
-@app.exception_handler(HTTPException)
-async def handle_bad_request(request, exc):
-    print(exc.detail)
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail},
-    )
-
+app =init_app()
 
 #-================================================================================
 
