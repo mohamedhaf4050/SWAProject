@@ -7,3 +7,8 @@ class UserProfile(BaseModel):
     profilePictureUrl: str
 
 
+from pydantic import BaseModel
+
+class Data2(BaseModel):
+    user_id: str
+    profile_picture_url: str

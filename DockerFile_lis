@@ -17,5 +17,5 @@ COPY . .
 EXPOSE 8000
 
 # Start the FastAPI server
-CMD [ "python","-u", "Apps/Util/ListnerMSProfileKafka.py" ]
+CMD [ "python","-u", "Apps/Util/Listner.py" ]
 

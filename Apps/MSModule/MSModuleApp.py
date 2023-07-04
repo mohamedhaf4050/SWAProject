@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
+from Apps.MSProfile.userProfileModel import Data2
 
 from Apps.Util.fastap import init_app
 from .cirriclumModel import Module
@@ -123,6 +124,17 @@ def delete_module(module_id: str):
             return {"message": "Module deleted"}
 
     raise HTTPException(status_code=404, detail="Module not found")
+
+
+
+
+
+@app.post("/send_data/")
+def send_data(data: Data2):
+    topic = "profile_picture"
+    message = {'user_id': data.user_id, 'profile_picture_url': data.profile_picture_url}
+    publish_to_kafka(topic, message)
+    return {"message": "Data sent successfully"}
 
 
 def delete_child_modules(module_id: str):
