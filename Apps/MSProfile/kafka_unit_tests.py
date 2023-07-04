@@ -72,20 +72,3 @@ def test_create_user_profile(client, kafka_consumer):
 
     else:
         pytest.fail("No matching Kafka message found")
-
-    # Continue with additional assertions or checks on the Kafka message if needed
-
-
-    # # Consume the Kafka message
-    # message = kafka_consumer.poll(5.0)  # Wait for 5 seconds for the message
-
-    # # Verify the Kafka message
-    # assert message is not None
-    # assert not message.error()
-    # value = message.value()
-    # kafka_message = json.loads(value.decode('utf-8'))
-
-    # assert kafka_message['userId'] == '333'
-    # # Assert other relevant data in the Kafka message
-
-    # # Continue with additional assertions or checks on the Kafka message if needed
