@@ -7,8 +7,7 @@ from .MSModuleApp import app, collection
 
 
 # client = TestClient(app)
-print(os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
-print(os.getenv('MONGO_HOST'))
+
 @pytest.fixture
 def client():
     with TestClient(app) as client:

@@ -16,7 +16,7 @@ from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import KafkaException
 from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_producer
 import json
-from ..Util.database import collection
+from ..Util.database import user_profile_collection
 
 app = init_app()
 

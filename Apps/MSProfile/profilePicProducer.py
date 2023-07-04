@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 import json

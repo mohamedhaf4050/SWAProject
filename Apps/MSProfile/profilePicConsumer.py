@@ -1,7 +1,10 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from confluent_kafka import Consumer
 import json 
 from pymongo import MongoClient, UpdateOne
+
 
 # Kafka consumer configuration
 kafka_conf = {
