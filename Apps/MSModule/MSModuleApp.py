@@ -1,3 +1,4 @@
+from Apps.utils import logger
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
@@ -29,6 +30,7 @@ from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_produ
 
 
 app =init_app()
+logger(app)
 
 #-================================================================================
 
