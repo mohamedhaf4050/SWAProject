@@ -25,7 +25,7 @@ from starlette.types import ASGIApp
 import os
 import uvicorn
 
-APP_NAME = os.environ.get("APP_NAME")
+APP_NAME = ""
 
 EXPOSE_PORT = 8000
 
@@ -39,6 +39,8 @@ class EndpointFilter(logging.Filter):
 
 
 def init_obs(app):
+    
+    APP_NAME=os.environ.get("APP_NAME")
     log_config = uvicorn.config.LOGGING_CONFIG
     log_config["formatters"]["access"]["fmt"] = "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] [trace_id=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s] - %(message)s"
     uvicorn.run(app, host="0.0.0.0", port=EXPOSE_PORT, log_config=log_config)

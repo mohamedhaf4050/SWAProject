@@ -19,7 +19,6 @@ from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_produ
 import json
 from ..Util.database import user_profile_collection
 import logging
-
 app = init_app()
 
 logger(app)
@@ -44,7 +43,8 @@ def create_user_profile(user_profile: UserProfile):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
-    
+    logging.error("app.post/api/profiles")
+
 
     return {"userId": user_profile.userId}
 
@@ -65,6 +65,7 @@ def get_user_profile(user_id: str):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.get")
 
     return user_profile
 
@@ -86,6 +87,7 @@ def update_user_profile(user_id: str, user_profile: UserProfile):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.put")
 
     return user_profile
 
@@ -103,6 +105,7 @@ def delete_user_profile(user_id: str):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.delete")
 
     return {"message": "User profile deleted"}
 

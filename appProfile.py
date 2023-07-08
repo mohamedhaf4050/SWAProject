@@ -13,7 +13,6 @@ if __name__ == '__main__':
 
     # os.system(f"python Apps/Util/ListnerMSProfileKafka.py")
    init_obs(app)
-   print( os.environ.get("APP_NAME"))
 
     # uvicorn.run(app, host="0.0.0.0", port=8000)
     
