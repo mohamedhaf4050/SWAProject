@@ -18,10 +18,12 @@ from confluent_kafka import KafkaException
 from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_producer
 import json
 from ..Util.database import user_profile_collection
+import logging
 
 app = init_app()
 
 logger(app)
+print( os.environ.get("APP_NAME"))
 
 #-================================================================================
 
@@ -42,6 +44,7 @@ def create_user_profile(user_profile: UserProfile):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    
 
     return {"userId": user_profile.userId}
 
@@ -117,5 +120,6 @@ def get_all_user_profiles():
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("get_all_user_profiles")
 
     return user_profiles

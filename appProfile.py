@@ -1,3 +1,4 @@
+from Apps.utils import init_obs
 import uvicorn
 import os
 import subprocess
@@ -11,8 +12,10 @@ if __name__ == '__main__':
     # subprocess.Popen(["gnome-terminal", "--", "python", "Apps/Util/ListnerMSProfileKafka.py"])
 
     # os.system(f"python Apps/Util/ListnerMSProfileKafka.py")
-   
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+   init_obs(app)
+   print( os.environ.get("APP_NAME"))
+
+    # uvicorn.run(app, host="0.0.0.0", port=8000)
     
     
     # uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

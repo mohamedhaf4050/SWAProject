@@ -25,7 +25,7 @@ from starlette.types import ASGIApp
 import os
 import uvicorn
 
-APP_NAME = os.environ.get("APP_NAME", "app")
+APP_NAME = os.environ.get("APP_NAME")
 
 EXPOSE_PORT = 8000
 

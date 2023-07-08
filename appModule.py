@@ -1,7 +1,6 @@
-import uvicorn
+from Apps.utils import init_obs
 import os
 import subprocess
-from dotenv import load_dotenv
 # load_dotenv()
 
 from Apps.MSModule.MSModuleApp import app 
@@ -15,7 +14,7 @@ if __name__ == '__main__':
     # os.system(f"python Apps/Util/ListnerMSProfileKafka.py")
 # os.system(f"python Apps/Util/ListnerMSProfileKafka.py")
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+   init_obs(app)
 
     
     

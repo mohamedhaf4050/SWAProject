@@ -31,6 +31,7 @@ from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_produ
 
 app =init_app()
 logger(app)
+print( os.environ.get("APP_NAME"))
 
 #-================================================================================
 
