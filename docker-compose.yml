@@ -2,15 +2,6 @@ version: '3.8'
 
 services:
 
-  # api_manager:
-  #     image: wso2/wso2am:4.0.0
-  #     container_name: api_manager
-  #     ports:
-  #       - "8280:8280"
-  #       - "8243:8243"
-  #       - "9443:9443"
-  #     volumes:
-  #       - aa:/home/wso2carbon/wso2am-4.0.0/repository/*
 
   kafka:
     image: docker.io/bitnami/kafka:3.4
@@ -25,35 +16,6 @@ services:
           timeout: 10s
           retries: 5
   
-  kafka2:
-    image: docker.io/bitnami/kafka:3.4
-    ports:
-      - "9093:9092"
-    environment:
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093
-    healthcheck:
-          test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9093", "--list"]
-          interval: 10s
-          timeout: 10s
-          retries: 5
-
-  # routerapp:
-  #   container_name: routerApp
-  #   build:
-  #     context: .
-  #   # command: tail -F anything
-  #   ports:
-  #     - '8000:80'
-  #   environment:
-  #     - KAFKA_HOST=kafka:9092
-
-  #   depends_on:
-  #     - kafka
-  #     - zookeeper
-  #     - db
-
-
 # Use root/example as user/password credentials
   mongo:
     image: mongo
@@ -75,17 +37,6 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-  ms_lis:
-      build:
-        context: .
-        dockerfile: DockerFile_lis
-      environment:
-        - KAFKA_BOOTSTRAP_SERVERS=swaproject-kafka-1:9092
-        - DB_VERSION=3.8
-        - MONGO_HOST=mongo:27017
-      depends_on:
-            kafka:
-              condition: service_healthy
   ms_profile_app:
       build:
         context: .
@@ -97,9 +48,7 @@ services:
         - DB_VERSION=3.8
         - MONGO_HOST=mongo:27017
       
-      depends_on:
-
-        - ms_lis
+   
   ms_module_app:
       build:
         context: .
@@ -111,9 +60,7 @@ services:
         - DB_VERSION=3.8
         - MONGO_HOST=mongo:27017
       
-      depends_on:
-
-        - ms_lis
+     
 volumes:
   mongodb_data:
 

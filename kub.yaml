@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+  labels:
+    app: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: kafka
+          image: docker.io/bitnami/kafka:3.4
+          ports:
+            - containerPort: 9092
+          env:
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - kafka-topics.sh --bootstrap-server localhost:9092 --list
+            initialDelaySeconds: 30
+            periodSeconds: 10
+        - name: mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: example
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+
+        - name: ms-profile-app
+          image: localhost:5000/ms-profile-app:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: swaproject-kafka-1:9092
+            - name: DB_VERSION
+              value: "3.8"
+            - name: MONGO_HOST
+              value: mongo:27017
+        - name: ms-module-app
+          image: localhost:5000/ms-module-app:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: swaproject-kafka-1:9092
+            - name: DB_VERSION
+              value: "3.8"
+            - name: MONGO_HOST
+              value: mongo:27017
+      volumes:
+        - name: mongodb-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - name: ms-profile-app
+      protocol: TCP
+      port: 8001
+      targetPort: 8000
+    - name: ms-module-app
+      protocol: TCP
+      port: 8002
+      targetPort: 8000
+  type: LoadBalancer
