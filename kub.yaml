@@ -53,7 +53,7 @@ spec:
             - name: DB_VERSION
               value: "3.8"
             - name: MONGO_HOST
-              value: mongo:27017
+              value: monfo-bd-mongo:27017
         - name: ms-module-app
           image: localhost:5000/ms-module-app:latest
           ports:
@@ -64,7 +64,7 @@ spec:
             - name: DB_VERSION
               value: "3.8"
             - name: MONGO_HOST
-              value: mongo:27017
+              value: monfo-bd-mongo:27017
       volumes:
         - name: mongodb-data
           emptyDir: {}
@@ -85,4 +85,18 @@ spec:
       protocol: TCP
       port: 8002
       targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monfo-bd-mongo
+spec:
+  selector:
+    app: my-app
+  ports:
+    - name: mongo
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
   type: LoadBalancer
