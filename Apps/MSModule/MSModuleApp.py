@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException
+import logging
+from Apps.utils import logger
+from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
@@ -26,9 +28,10 @@ from confluent_kafka import Producer
 import os
 from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_producer
 
-
+from ..Util.auth import oauth2_scheme
 
 app =init_app()
+logger(app)
 
 #-================================================================================
 
@@ -37,7 +40,7 @@ app =init_app()
 
 
 @app.post("/module/")
-def create_module(module: Module):
+def create_module(module: Module, token: str = Depends(oauth2_scheme)):
     module_dict = module.dict()
   # Check if module ID already exists
     existing_module = collection.find_one({"module_id": module.module_id})
@@ -62,12 +65,15 @@ def create_module(module: Module):
 
     # Publish message to Kafka topic
     publish_to_kafka("module_created", module.module_id)
+    logging.error("pp.post(/module/)")
 
     return module
 
 
 @app.get("/module/{module_id}")
-def get_module(module_id: str):
+def get_module(module_id: str, token: str = Depends(oauth2_scheme)):
+    logging.error("app.get(/module")
+
     module = collection.find_one({"module_id": module_id})
     if module:
         # Publish message to Kafka topic
@@ -79,19 +85,19 @@ def get_module(module_id: str):
 
 
 @app.get("/module")
-def get_all_modules():
+def get_all_modules( token: str = Depends(oauth2_scheme)):
     modules = collection.find()
     module_list = [Module(**module) for module in modules]
 
     # Publish message to Kafka topic for each module
     for module in module_list:
         publish_to_kafka("module_retrieved", module.module_id)
-
+    logging.error("pp.getall")
     return module_list
 
 
 @app.put("/module/{module_id}")
-def update_module(module_id: str, module: Module):
+def update_module(module_id: str, module: Module, token: str = Depends(oauth2_scheme)):
       # Check if module ID already exists
     existing_module = collection.find_one({"module_id": module.module_id})
     if existing_module:
@@ -99,6 +105,8 @@ def update_module(module_id: str, module: Module):
 
     module_dict = module.dict()
     result = collection.update_one({"module_id": module_id}, {"$set": module_dict})
+    logging.error("app.put(/module")
+
     if result.modified_count > 0:
         # Publish message to Kafka topic
         publish_to_kafka("module_updated", module_id)
@@ -109,7 +117,7 @@ def update_module(module_id: str, module: Module):
 
 
 @app.delete("/module/{module_id}")
-def delete_module(module_id: str):
+def delete_module(module_id: str, token: str = Depends(oauth2_scheme)):
     module = collection.find_one({"module_id": module_id})
     if module:
         # Recursively delete child modules
@@ -117,6 +125,8 @@ def delete_module(module_id: str):
         
         # Delete the parent module
         result = collection.delete_one({"module_id": module_id})
+        logging.error("app.delete(/module")
+
         if result.deleted_count > 0:
             # Publish message to Kafka topic
             publish_to_kafka("module_deleted", module_id)

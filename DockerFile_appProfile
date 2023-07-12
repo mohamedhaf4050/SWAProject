@@ -13,14 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code into the container
 COPY . .
 
-# Install Supervisor
-RUN apt-get update && apt-get install -y supervisor
-
-# Copy the Supervisor configuration file
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 # Expose the port on which the FastAPI server will run
 EXPOSE 8000
 
-# Start Supervisor
-CMD ["/usr/bin/supervisord"]
+# Start the FastAPI server
+CMD [ "python","-u", "appProfile.py" ]
+

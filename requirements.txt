@@ -14,3 +14,14 @@ pytest
 requests
 httpx
 python-dotenv
+prometheus-client==0.17.0
+opentelemetry-instrumentation-fastapi==0.39b0
+opentelemetry-instrumentation-logging==0.39b0
+opentelemetry-exporter-otlp==1.18.0
+opentelemetry-api==1.18.0
+opentelemetry-sdk==1.18.0
+python-jose[cryptography]
+python-multipart
+python-jose
+passlib
+

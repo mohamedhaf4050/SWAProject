@@ -1,4 +1,5 @@
 import os
+from Apps.utils import logger
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
@@ -6,7 +7,7 @@ from fastapi.openapi.docs import (
 )
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from pymongo import MongoClient
 
 from Apps.Util.fastap import init_app
@@ -17,14 +18,18 @@ from confluent_kafka import KafkaException
 from ..Util.kafka import publish_to_kafka, create_topic, kafka_conf, kafka_producer
 import json
 from ..Util.database import user_profile_collection
-
+import logging
+from ..Util.auth import oauth2_scheme
 app = init_app()
+
+logger(app)
+print( os.environ.get("APP_NAME"))
 
 
 #-================================================================================
 
 @app.post("/api/profiles", status_code=201)
-def create_user_profile(user_profile: UserProfile):
+def create_user_profile(user_profile: UserProfile, token: str = Depends(oauth2_scheme)):
     # Check if the user ID already exists
     if user_profile_collection.find_one({"userId": user_profile.userId}):
         raise HTTPException(status_code=400, detail="User ID already exists")
@@ -40,12 +45,14 @@ def create_user_profile(user_profile: UserProfile):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.post/api/profiles")
+
 
     return {"userId": user_profile.userId}
 
 
 @app.get("/api/profiles/{userId}")
-def get_user_profile(user_id: str):
+def get_user_profile(user_id: str, token: str = Depends(oauth2_scheme)):
     user_profile = user_profile_collection.find_one({"userId": user_id})
     if not user_profile:
         raise HTTPException(status_code=404, detail="User not found")
@@ -60,12 +67,13 @@ def get_user_profile(user_id: str):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.get")
 
     return user_profile
 
 
 @app.put("/api/profiles/{userId}")
-def update_user_profile(user_id: str, user_profile: UserProfile):
+def update_user_profile(user_id: str, user_profile: UserProfile, token: str = Depends(oauth2_scheme)):
     existing_profile = user_profile_collection.find_one({"userId": user_id})
     if not existing_profile:
         raise HTTPException(status_code=404, detail="User not found")
@@ -81,12 +89,13 @@ def update_user_profile(user_id: str, user_profile: UserProfile):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.put")
 
     return user_profile
 
 
 @app.delete("/api/profiles/{userId}")
-def delete_user_profile(user_id: str):
+def delete_user_profile(user_id: str, token: str = Depends(oauth2_scheme)):
     result = user_profile_collection.delete_one({"userId": user_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
@@ -98,12 +107,13 @@ def delete_user_profile(user_id: str):
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("app.delete")
 
     return {"message": "User profile deleted"}
 
 
 @app.get("/api/profiles")
-def get_all_user_profiles():
+def get_all_user_profiles(token: str = Depends(oauth2_scheme)):
     user_profiles = list(user_profile_collection.find())
     # Convert ObjectId to string representation
     for profile in user_profiles:
@@ -115,5 +125,6 @@ def get_all_user_profiles():
         # ... other relevant data ...
     }
     publish_to_kafka(topic, message)
+    logging.error("get_all_user_profiles")
 
     return user_profiles
