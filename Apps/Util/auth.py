@@ -19,9 +19,8 @@ def verify_password(plain_password, hashed_password):
 
 def authenticate_user(username: str, password: str):
     # Implement your own logic to authenticate the user
-    # For example, query the database to find the user with the provided username
-  
- 
+   
+
     return True
 def create_access_token(data: dict):
     to_encode = data.copy()
